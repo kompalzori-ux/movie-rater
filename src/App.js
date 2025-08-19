@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 const USERS = {
-  Labubu16: "1234", // Админ
-  Zimomo19: "5678", // Ограниченный пользователь
+  Labubu16: "1234",
+  Zimomo19: "5678",
 };
 
 const INITIAL_CATEGORIES = {
@@ -34,8 +34,6 @@ function App() {
     JSON.parse(localStorage.getItem("categories")) || INITIAL_CATEGORIES
   );
 
-  const isAdmin = user === "Labubu16";
-
   function login() {
     if (USERS[username] === password) {
       setUser(username);
@@ -51,7 +49,7 @@ function App() {
   }
 
   function addCategory(name) {
-    if (!isAdmin || !name.trim() || categories[name]) return;
+    if (!name.trim() || categories[name]) return;
     const updated = { ...categories, [name]: [] };
     setCategories(updated);
     localStorage.setItem("categories", JSON.stringify(updated));
@@ -59,7 +57,7 @@ function App() {
   }
 
   function addMovie(title) {
-    if (!isAdmin || !title.trim() || !currentCategory || currentCategory === "Bests") return;
+    if (!title.trim() || !currentCategory || currentCategory === "Bests") return;
     const updated = {
       ...categories,
       [currentCategory]: [...categories[currentCategory], { title, ratings: {}, watched: false }],
@@ -69,7 +67,7 @@ function App() {
   }
 
   function editCategoryName(oldName, newName) {
-    if (!isAdmin || !newName.trim() || categories[newName] || currentCategory === "Bests") return;
+    if (!newName.trim() || categories[newName] || currentCategory === "Bests") return;
     const updated = { ...categories };
     updated[newName] = updated[oldName];
     delete updated[oldName];
@@ -79,7 +77,7 @@ function App() {
   }
 
   function editMovieTitle(oldTitle, newTitle) {
-    if (!isAdmin || !newTitle.trim() || !currentCategory || currentCategory === "Bests") return;
+    if (!newTitle.trim() || !currentCategory || currentCategory === "Bests") return;
     const updated = {
       ...categories,
       [currentCategory]: categories[currentCategory].map((m) =>
@@ -91,7 +89,7 @@ function App() {
   }
 
   function deleteCategory(categoryName) {
-    if (!isAdmin || currentCategory === "Bests") return;
+    if (currentCategory === "Bests") return;
     const updated = { ...categories };
     delete updated[categoryName];
     setCategories(updated);
@@ -100,7 +98,7 @@ function App() {
   }
 
   function deleteMovie(title) {
-    if (!isAdmin || currentCategory === "Bests") return;
+    if (currentCategory === "Bests") return;
     const updated = {
       ...categories,
       [currentCategory]: categories[currentCategory].filter((m) => m.title !== title),
@@ -204,12 +202,10 @@ function App() {
           placeholder="Новая категория (актер/режиссер)"
           onChange={(e) => (categoryInput = e.target.value)}
           className="border border-[#FF9999] p-2 rounded flex-grow bg-white text-[#990000]"
-          disabled={!isAdmin}
         />
         <button
           onClick={() => addCategory(categoryInput)}
           className="bg-[#FF0000] text-white px-4 py-2 rounded shadow-md"
-          disabled={!isAdmin}
         >
           + Категория
         </button>
@@ -217,7 +213,6 @@ function App() {
           <button
             onClick={() => deleteCategory(currentCategory)}
             className="bg-[#FF6666] text-white px-4 py-2 rounded ml-2"
-            disabled={!isAdmin}
           >
             Удалить категорию
           </button>
@@ -231,12 +226,10 @@ function App() {
               placeholder="Название фильма"
               onChange={(e) => (movieInput = e.target.value)}
               className="border border-[#FF9999] p-2 rounded flex-grow bg-white text-[#990000]"
-              disabled={!isAdmin}
             />
             <button
               onClick={() => addMovie(movieInput)}
               className="bg-[#FF6666] text-white px-4 py-2 rounded"
-              disabled={!isAdmin}
             >
               + Фильм
             </button>
@@ -245,10 +238,8 @@ function App() {
           <h2
             className="text-lg font-semibold mt-6 cursor-pointer text-[#660000] hover:underline"
             onClick={() => {
-              if (isAdmin) {
-                const newName = prompt(`Введите новое название для "${currentCategory}":`);
-                if (newName) editCategoryName(currentCategory, newName);
-              }
+              const newName = prompt(`Введите новое название для "${currentCategory}":`);
+              if (newName) editCategoryName(currentCategory, newName);
             }}
           >
             {currentCategory}
@@ -272,14 +263,11 @@ function App() {
                           checked={m.watched}
                           onChange={() => toggleWatched(m.title)}
                           className="h-4 w-4 rounded accent-[#FF3333]"
-                          disabled={!isAdmin}
                         />
                         <span
                           onClick={() => {
-                            if (isAdmin) {
-                              const newTitle = prompt(`Введите новое название для "${m.title}":`);
-                              if (newTitle) editMovieTitle(m.title, newTitle);
-                            }
+                            const newTitle = prompt(`Введите новое название для "${m.title}":`);
+                            if (newTitle) editMovieTitle(m.title, newTitle);
                           }}
                           className="cursor-pointer text-[#990000] hover:underline"
                         >
@@ -289,7 +277,6 @@ function App() {
                       <button
                         onClick={() => deleteMovie(m.title)}
                         className="bg-[#FF6666] text-white px-2 py-1 rounded ml-2"
-                        disabled={!isAdmin}
                       >
                         Удалить
                       </button>

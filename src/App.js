@@ -34,7 +34,6 @@ function App() {
     JSON.parse(localStorage.getItem("categories")) || INITIAL_CATEGORIES
   );
 
-  // Проверка роли пользователя
   const isAdmin = user === "Labubu16";
 
   function login() {
@@ -123,7 +122,7 @@ function App() {
   }
 
   function toggleWatched(title) {
-    if (!isAdmin || !currentCategory || currentCategory === "Bests") return;
+    if (!currentCategory || currentCategory === "Bests") return;
     const updated = {
       ...categories,
       [currentCategory]: categories[currentCategory].map((m) =>
